@@ -1,0 +1,71 @@
+package com.Springbootcrud.JavaSpringbootProject;
+
+import java.util.List;
+
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class EmployeeController {
+
+	@Autowired
+	SessionFactory sf;
+
+	@PostMapping("insertmultiplerecord")
+	public List<Employee> multipleinsert(@RequestBody List<Employee> list) {
+		for (Employee employee : list) {
+			Session ss = sf.openSession();
+			Transaction t = ss.beginTransaction();
+			ss.save(employee);
+			t.commit();
+			System.out.println("Record inserted Sucessfully......");
+		}
+		return list;
+
+	}
+
+	@PutMapping("updatemultiplerecord")
+	public List<Employee> mutipleupdate(@RequestBody List<Employee> list) {
+		for (Employee employee : list) {
+			Session ss = sf.openSession();
+			Transaction t = ss.beginTransaction();
+			ss.update(employee);
+			t.commit();
+			System.out.println("Record updated Sucesfully.....");
+		}
+		return list;
+
+	}
+
+	@DeleteMapping("Deletemultiplerecord")
+	public String multipledelete(@RequestBody List<Employee> list) {
+		for (Employee employee : list) {
+			Session ss = sf.openSession();
+			Transaction t = ss.beginTransaction();
+			Query query = ss.createQuery("DELETE FROM Employee");
+			query.executeUpdate();
+			t.commit();
+		}
+		return "Deletes All Table Records";
+
+	}
+
+	@GetMapping("showmultileRecord")
+	public List<Employee> all() {
+		Session ss = sf.openSession();
+		Query query = ss.createQuery("from Employee");
+		List<Employee> list = query.list();
+		return list;
+
+	}
+
+}
